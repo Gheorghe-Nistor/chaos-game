@@ -1,77 +1,3 @@
-# Chaos Game
-
-------------------------------------------------------------------------
-
-## Membrii echipei
-
--   Colceru Cosmin
--   Ungureanu Dan-Andrei
--   Nistor Gheorghe
-
-## Descriere
-
-Chaos game este o metodă de a genera fractali cu ajutorul poligoanelor.
-Regulile sunt simple și vor fi explicate folosind exemplul unui triunghi
-cu vârfurile A, B și C. Începem cu un punct aleator P1 în interiorul
-triunghiului. Pentru a calcula următoarul punct P2, alegem unul dintre
-cele trei vârfuri ale triunghiului la întâmplare și plasăm P2 în
-mijlocul traseului dintre punctul P1 și vârful selectat aleator. Repetăm
-acest proces de un număr mare de ori și vom obține fractalul numit
-triunghiul lui Sierpinski, o figură descrisă pentru prima dată de
-matematicianul polonez Wacław Sierpiński în 1915.
-
-[]{.image .placeholder original-image-src="sierpinski-triangle.png"
-original-image-title="" width="450px"}
-
-### Generalizare
-
-Acest mecanism de construcție pentru fractali poate fi aplicat oricărui
-poligon. Cu toate acestea, dacă creștem numărul de vârfuri, nu ar trebui
-să mai înjumătățim distanța, ci să ajustăm ușor factorul, altfel
-algoritmul nu va crea întotdeauna un fractal. De exemplu, dacă
-înjumătățim distanța dintre poziția curentă și vârful selectat aleator
-al unui pătrat, obținem o zonă umplută uniform cu puncte și nu un
-fractal.
-
-Distanța care trebuie folosita pentru a obiține un fractal într-un
-poligon cu n vârfuri poate fi calculată după formula
-$r=\frac{n}{n + 3}$.
-
-### Restricții la alegerea vârfurilor
-
-Dacă adăugam restricții la alegerea vârfurilor putem obține alte tipuri
-de fractali. Astfel de restricții pot fi: - un vârf nu poate fi ales de
-doua ori la rând - dacă un vârf a fost ales, în următoarea iterație nu
-putem alege unul din vecinii acelui vârf - pe lângă vârfurile
-poligonului, acum putem alege și mijlocurile laturilor
-
-Adăugând astfel de restricții și modificând valoarea `r`, putem obține
-astfel de fractali:
-
-[]{.image .placeholder original-image-src="n4r1.png"
-original-image-title="" width="450px"}
-
-[]{.image .placeholder original-image-src="n4r2.png"
-original-image-title="" width="450px"}
-
-[]{.image .placeholder original-image-src="n5r5.png"
-original-image-title="" width="450px"}
-
-[]{.image .placeholder original-image-src="sierpinski-carpet.png"
-original-image-title="" width="450px"}
-
-## Implementarea aplicației
-
-### Librăriile folosite
-
-``` r
-library(shiny)
-library(shinyjs)
-```
-
-### User Interface
-
-``` r
 ui <- fluidPage(
   id="body",
   tags$style("
@@ -177,11 +103,7 @@ ui <- fluidPage(
     "© 2023 Colceru Cosmin, Ungureanu Dan-Andrei, Nistor Gheorghe",
   ),
 )
-```
 
-### Server
-
-``` r
 server <- function(input, output) {
   # Apăsăm butonul "Generate"
   observeEvent(input$generate, {
@@ -207,7 +129,87 @@ server <- function(input, output) {
     else if (p == 3)
       chaosGame(4, 2/3, 7, 20000, 0.1, dot_color, FALSE)
   })
-
+  
+  # Nu funcționează delay-ul în shiny
+  # Voiam să arătăm modul în care este ales fiecare punct în parte
+  
+  # chaosGameDelay <- function(n, r, restriction, nr_points, dot_size, initial_points_x, initial_points_y, colors_list, colors, points_x, points_y, current_x, current_y, last_p, last_last_p){
+  #   if(nr_points == 0){
+  #     return ()
+  #   }
+  #   cat(nr_points, '\n')
+  #   output$chaosGamePlot <- renderPlot({
+  #     plot(
+  #       points_x,
+  #       points_y,
+  #       xlab = "",
+  #       ylab = "",
+  #       type = "p",
+  #       col = colors,
+  #       pch = 16,
+  #       cex = dot_size,
+  #       xaxt = "n",
+  #       yaxt = "n"
+  #     )
+  #   },
+  #   bg="transparent"
+  #   )
+  #   points_x <- append(points_x, current_x)
+  #   points_y <- append(points_y, current_y)
+  #   
+  #   # aleg un punct random din fig. geometrică inițială
+  #   if (restriction == 6)
+  #     p <- sample(1:(2*n), 1)
+  #   else if (restriction == 7)
+  #     p <- sample(1:(n + 1), 1)
+  #   else
+  #     p <- sample(1:n, 1)
+  #   
+  #   # nu poti alege acelasi varf de doua ori la rand
+  #   if (restriction == 1) {
+  #     while (p == last_p) {
+  #       p <- sample(1:n, 1)
+  #     }
+  #   }
+  #   
+  #   # punctul ales nu poate fi la doua pozitii distanta de punctul anterior
+  #   else if (restriction == 2) {
+  #     while ((p - 1) == (last_p + 1) %% n)
+  #       p <- sample(1:n, 1)
+  #   }
+  #   
+  #   # punctul ales nu poate fi punctul urmator in sensul acelor de ceasornic
+  #   else if (restriction == 3) {
+  #     while (((p - 1) == last_p %% n)) 
+  #       p <- sample(1:n, 1)
+  #   }
+  #   
+  #   # punctul ales nu poate fi punctul urmator in sensul invers acelor de ceasornic
+  #   else if (restriction == 4) {
+  #     while (((p - 1) == (last_p - 2) %% n)) 
+  #       p <- sample(1:n, 1)
+  #   }
+  #   
+  #   # daca ultimele doua puncte ales au fost acelasi, punctul ales nu poate fi vecin cu punctul anterior
+  #   else if (restriction == 5) {
+  #     if (last_p == last_last_p)
+  #       while ((p - 1) == last_p %% n || (p - 1) == (last_p - 2) %% n)
+  #         p <- sample(1:n, 1)
+  #   }
+  #   
+  #   last_last_p <- last_p
+  #   last_p = p
+  #   
+  #   # îi asociez punctului culoarea corespunzătoare
+  #   colors <- append(colors, colors_list[p])
+  #   
+  #   # calculăm un punct nou
+  #   current_x <- current_x + r * (initial_points_x[p] - current_x)
+  #   current_y <- current_y + r * (initial_points_y[p] - current_y)
+  #   
+  #   delay(300, chaosGameRec(n, r, restriction, nr_points-1, dot_size, initial_points_x, initial_points_y, colors_list, colors, points_x, points_y, current_x, current_y, last_p, last_last_p))
+  # }
+  
   chaosGame <- function(n, r, restriction, nr_points, dot_size, dot_color, delay){
     cat("Start nr_points=", nr_points, "\n")
     
@@ -381,10 +383,6 @@ server <- function(input, output) {
     }
   }
 }
-```
 
-### Executarea aplicației
-
-``` r
 shinyApp(ui = ui, server = server)
-```
+
